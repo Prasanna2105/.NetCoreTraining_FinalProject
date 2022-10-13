@@ -1,18 +1,31 @@
-﻿$.get("https://localhost:44338/api/Softlocks/GetSoftlocks", function (data, status) {
-
-    let code = "";
-    for (let x in data) {
-        code += "<tr>"
-        code += "<td>" + data[x].employee_id + "</td>"
-        code += "<td>" + data[x].employee_name + "</td>"
-        code += "<td>" + data[x].manager + "</td>"
-        code += "<td>" + data[x].requestmessage + "</td>"
-        code += "<td>" + data[x].managerstatus + "</td>"
-        code += "<td>" + data[x].reqdate + "</td>"
-        code += "<td> <button class='btn btn-primary' onclick = 'ViewDetails(" + data[x].lockid + ")'> View Details </button> </td> </tr>"
-    }
-    $('#tdata').html(code)
-})
+﻿$(document).ready(function () {
+    $.ajax({
+        url: 'https://localhost:44338/api/Softlocks/GetSoftlocks',
+        dataType: "json",
+        type: "GET",
+        headers: { "Authorization": 'Bearer ' + sessionStorage.getItem('token') },
+        contentType: "application/json",
+        success: function (data, textStatus, error) {
+            if (data) {
+                let code = "";
+                for (let x in data) {
+                    code += "<tr>"
+                    code += "<td>" + data[x].employee_id + "</td>"
+                    code += "<td>" + data[x].employee_name + "</td>"
+                    code += "<td>" + data[x].manager + "</td>"
+                    code += "<td>" + data[x].requestmessage + "</td>"
+                    code += "<td>" + data[x].managerstatus + "</td>"
+                    code += "<td>" + data[x].reqdate + "</td>"
+                    code += "<td> <button class='btn btn-primary' onclick = 'ViewDetails(" + data[x].lockid + ")'> View Details </button> </td> </tr>"
+                }
+                $('#tdata').html(code)
+            }
+        },
+        error: function (error, textStatus, errorThrown) {
+            alert(error.responseJSON.message)
+        }
+    });
+});
 
 function ViewDetails(id) {
    
@@ -21,6 +34,7 @@ function ViewDetails(id) {
         type: "GET",
         cache: false,
         contentType: "application/json",
+        headers: { "Authorization": 'Bearer ' + sessionStorage.getItem('token') },
         beforeSend: function () {
             $('#spinner').show();
         },
@@ -55,6 +69,7 @@ function RequestConfirmation() {
         url: 'https://localhost:44338/api/Softlocks/UpdateSoftlockStatus',
         dataType: "json",
         type: "POST",
+        headers: { "Authorization": 'Bearer ' + sessionStorage.getItem('token') },
         data: JSON.stringify({
             lockid: lockid,
             employee_id: employeeid,

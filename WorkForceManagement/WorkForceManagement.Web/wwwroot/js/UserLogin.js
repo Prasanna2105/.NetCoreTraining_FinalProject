@@ -27,7 +27,7 @@
                 processData: false,
                 success: function (data, textStatus, jQxhr) {
                     alert("User successfully authenticated")
-
+                    sessionStorage.setItem("token", data.token);
                     if (data.role == "manager") {
                         window.location.replace('ManagerHomePage')
                     }

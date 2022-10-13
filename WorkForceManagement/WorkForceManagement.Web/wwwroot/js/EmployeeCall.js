@@ -1,22 +1,33 @@
-﻿$.get("https://localhost:44338/api/Employees/GetEmployees", function (data, status) {
-   
-    if (data) {
-        let code = ""
-        for (let x in data) {
-            code += "<tr>" 
-            code += "<td>" + data[x].employee_id + "</td>"
-            code += "<td>" + data[x].employee_name + "</td>"
-            code += "<td>" + data[x].skills + "</td>"
-            code += "<td>" + data[x].experience + "</td>"
-            code += "<td>" + data[x].manager + "</td>"
-            code += "<td>" + data[x].wfm_manager + "</td>"
-            code += "<td> <button class='btn btn-primary' onclick='RequestlockPopup(" + data[x].employee_id + ",\"" + data[x].manager +"\")'> Request Lock </button> </td>"
-            code += "</tr>"
+﻿$(document).ready(function () {
+    $.ajax({
+        url: 'https://localhost:44338/api/Employees/GetEmployees',
+        dataType: "json",
+        type: "GET",
+        headers: { "Authorization": 'Bearer ' + sessionStorage.getItem('token') },
+        contentType: "application/json",
+        success: function (data, textStatus, error) {
+            if (data) {
+                let code = ""
+                for (let x in data) {
+                    code += "<tr>"
+                    code += "<td>" + data[x].employee_id + "</td>"
+                    code += "<td>" + data[x].employee_name + "</td>"
+                    code += "<td>" + data[x].skills + "</td>"
+                    code += "<td>" + data[x].experience + "</td>"
+                    code += "<td>" + data[x].manager + "</td>"
+                    code += "<td>" + data[x].wfm_manager + "</td>"
+                    code += "<td> <button class='btn btn-primary' onclick='RequestlockPopup(" + data[x].employee_id + ",\"" + data[x].manager + "\")'> Request Lock </button> </td>"
+                    code += "</tr>"
+                }
+                $("#tdata").html(code)
+            }
+        },
+        error: function (error, textStatus, errorThrown) {
+            alert(error.responseJSON.message)
         }
-        $("#tdata").html(code)
-    }
+    });
+});
 
-})
 function RequestlockPopup(id,manager) {
     $('#empid').text("Please confirm the lock request for " + id + "");
     $('#employeeid').val(id);
@@ -33,6 +44,7 @@ function SendRequest() {
         url: 'https://localhost:44338/api/Softlocks/InsertSoftlock',
         dataType: "json",
         type: "POST",
+        headers: { "Authorization": 'Bearer ' + sessionStorage.getItem('token') },
         data: JSON.stringify({
             employee_id: employeeid,
             manager: managername,
